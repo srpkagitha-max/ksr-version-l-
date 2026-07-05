@@ -8,7 +8,7 @@ function shuf(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random(
 function tick(){ const m=Math.floor(sec/60), s=sec%60; $("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"); }
 function now(){ return new Date(); }
 
-$("startBtn").addEventListener("click", async()=>{
+$("startBtn").addEventListener("click", async()=>{ try { $("startBtn").disabled=true;
   student=$("stName").value.trim(); phone=$("stPhone").value.trim(); eid=$("stExamId").value.trim().toUpperCase(); code=$("stCode").value.trim().toUpperCase();
   if(!student||!phone||!eid||!code) return alert("All fields required");
   const ex=await getDoc(doc(db,"exams",eid)); if(!ex.exists()) return alert("Invalid Exam ID"); EXAM=ex.data();
@@ -24,6 +24,7 @@ $("startBtn").addEventListener("click", async()=>{
   sec=Math.min(normalSec,endLeft); totalSec=sec;
   $("examTitle").textContent=EXAM.title||eid; $("login").classList.add("hide"); $("exam").classList.remove("hide"); started=true; show(); tick();
   timer=setInterval(()=>{ sec--; tick(); if(sec<=0) submit(true); },1000);
+  } catch(e) { alert("Start exam failed: "+e.message); } finally { $("startBtn").disabled=false; }
 });
 
 function show(){
