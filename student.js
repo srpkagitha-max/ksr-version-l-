@@ -59,5 +59,71 @@ async function submit(auto){
   }
 }
 
-$("hallBtn").addEventListener("click",()=>{ const w=window.open("","_blank"); w.document.write(`<html><body style="font-family:Arial;text-align:center"><h1>Hall Ticket</h1><p>Name: ${$("stName").value}</p><p>Phone: ${$("stPhone").value}</p><p>Exam ID: ${$("stExamId").value}</p><p>Code: ${$("stCode").value}</p><button onclick="window.print()">Print</button></body></html>`); w.document.close(); });
+
+$("hallBtn").addEventListener("click", async()=>{
+  const name = $("stName").value.trim() || "Student";
+  const ph = $("stPhone").value.trim() || "-";
+  const exId = $("stExamId").value.trim().toUpperCase() || "-";
+  const exCode = $("stCode").value.trim().toUpperCase() || "-";
+  let examTitle = "-";
+  let startText = "-";
+  let endText = "-";
+  let durationText = "-";
+  try {
+    if (exId !== "-") {
+      const exSnap = await getDoc(doc(db,"exams",exId));
+      if (exSnap.exists()) {
+        const e = exSnap.data();
+        examTitle = e.title || exId;
+        if (e.startTime) startText = new Date(e.startTime).toLocaleString();
+        if (e.endTime) endText = new Date(e.endTime).toLocaleString();
+        if (e.startTime && e.endTime) {
+          const mins = Math.max(0, Math.round((new Date(e.endTime)-new Date(e.startTime))/60000));
+          durationText = mins + " minutes";
+        } else if (e.sec && e.questions) {
+          durationText = Math.round((Number(e.sec) * (e.questions.length || 0))/60) + " minutes";
+        }
+      }
+    }
+  } catch(e) {}
+  const ht = "KSR-" + exId + "-" + (ph.replace(/\D/g,"").slice(-4) || "0000") + "-" + Date.now().toString().slice(-5);
+  const w = window.open("", "_blank");
+  w.document.write(`<!DOCTYPE html><html><head><title>Hall Ticket</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+  body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:16px;color:#111}
+  .hall-card{max-width:760px;margin:20px auto;background:#fff;border:2px solid #0b57d0;border-radius:18px;overflow:hidden}
+  .hall-head{background:linear-gradient(135deg,#0b57d0,#071a3d);color:#fff;padding:22px;text-align:center}
+  .hall-head h1{margin:0;font-size:28px}.hall-head p{margin:8px 0 0;font-size:16px}
+  .hall-body{padding:22px}.hall-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .hall-box{border:1px solid #d1d5db;border-radius:12px;padding:12px;background:#f8fafc}
+  .hall-label{font-size:12px;color:#555;font-weight:900;text-transform:uppercase}.hall-value{font-size:18px;font-weight:900;margin-top:5px}
+  .hall-inst{margin-top:18px;padding:14px;border-left:6px solid #fbbc04;background:#fff8db;border-radius:12px;line-height:1.6}
+  .hall-actions{text-align:center;margin:20px}.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:900;background:#0b57d0;color:#fff}
+  .hall-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:22px;border-top:1px dashed #aaa;padding-top:18px}
+  @media print{body{background:white}.hall-actions{display:none}.hall-card{box-shadow:none;border-radius:0;margin:0;max-width:100%}}
+  @media(max-width:700px){.hall-grid{grid-template-columns:1fr}.hall-head h1{font-size:24px}}
+  </style></head><body>
+  <div class="hall-card">
+    <div class="hall-head"><h1>KSR Online Exam Platform</h1><p>Professional Hall Ticket</p></div>
+    <div class="hall-body">
+      <div class="hall-grid">
+        <div class="hall-box"><div class="hall-label">Hall Ticket No</div><div class="hall-value">${ht}</div></div>
+        <div class="hall-box"><div class="hall-label">Student Name</div><div class="hall-value">${name}</div></div>
+        <div class="hall-box"><div class="hall-label">Phone</div><div class="hall-value">${ph}</div></div>
+        <div class="hall-box"><div class="hall-label">Exam Title</div><div class="hall-value">${examTitle}</div></div>
+        <div class="hall-box"><div class="hall-label">Exam ID</div><div class="hall-value">${exId}</div></div>
+        <div class="hall-box"><div class="hall-label">Exam Code</div><div class="hall-value">${exCode}</div></div>
+        <div class="hall-box"><div class="hall-label">Start Time</div><div class="hall-value">${startText}</div></div>
+        <div class="hall-box"><div class="hall-label">End Time</div><div class="hall-value">${endText}</div></div>
+        <div class="hall-box"><div class="hall-label">Duration</div><div class="hall-value">${durationText}</div></div>
+        <div class="hall-box"><div class="hall-label">Status</div><div class="hall-value">Eligible</div></div>
+      </div>
+      <div class="hall-inst"><b>Instructions:</b><br>1. Exam ID and Exam Code must be entered exactly as shown.<br>2. Do not refresh or close the browser during exam.<br>3. Submit before time ends. Auto submit will happen at end time.</div>
+      <div class="hall-foot"><div>Student Signature</div><div>Invigilator Signature</div></div>
+    </div>
+  </div>
+  <div class="hall-actions"><button class="btn" onclick="window.print()">Print / Save PDF</button></div>
+  </body></html>`);
+  w.document.close();
+});
+
 window.addEventListener("beforeunload",(e)=>{ if(started&&!submitted){ e.preventDefault(); e.returnValue="Exam running"; } });
