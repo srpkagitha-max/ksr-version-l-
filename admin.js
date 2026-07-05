@@ -1,4 +1,4 @@
-import { auth, db } from '../firebase/firebase-config.js';
+import { auth, db } from './firebase-config.js';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
 import { doc,setDoc,getDoc,collection,getDocs,serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 const $=id=>document.getElementById(id);let currentQuestions=[],currentExamId='',resultsCache=[];
