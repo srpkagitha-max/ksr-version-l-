@@ -1,4 +1,4 @@
-import { db } from '../firebase/firebase-config.js';
+import { db } from './firebase-config.js';
 import { doc,getDoc,setDoc,serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js';
 const $=id=>document.getElementById(id);let EXAM,Q=[],cur=0,ans=[],rev=[],sec=0,totalSec=0,timer,student='',phone='',eid='',code='',started=false;
 function shuf(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}function tick(){let m=Math.floor(sec/60),s=sec%60;$('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
