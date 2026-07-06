@@ -10,7 +10,7 @@ function safe(v){ return String(v||"").trim().toUpperCase().replace(/[^A-Z0-9_-]
 function isoLocalValue(v){ if(!v) return ""; try { return new Date(v).toISOString(); } catch(e){ return ""; } }
 function csvDownload(text,name){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type:"text/csv;charset=utf-8"})); a.download=name; a.click(); }
 
-$("loginBtn").addEventListener("click", async()=>{ try{ msg("Logging in..."); await signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value); msg("Login success"); } catch(e){ msg(e.message,true); alert(e.message); }});
+$("loginBtn").addEventListener("click", async()=>{ try{ $("loginBtn").textContent="Checking..."; msg("Logging in..."); await signInWithEmailAndPassword(auth,$("email").value.trim(),$("pass").value); msg("Login success"); } catch(e){ msg(e.message,true); alert(e.message); } finally { $("loginBtn").textContent="Login"; }});
 $("logoutBtn").addEventListener("click",()=>signOut(auth));
 onAuthStateChanged(auth,(u)=>{ $("loginCard").classList.toggle("hide",!!u); $("app").classList.toggle("hide",!u); });
 
