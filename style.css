@@ -26,3 +26,10 @@ table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}td,th{b
 .hall-foot{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:22px;border-top:1px dashed #aaa;padding-top:18px}
 @media print{body{background:white}.hall-actions{display:none}.hall-card{box-shadow:none;border-radius:0;margin:0;max-width:100%}}
 @media(max-width:700px){.hall-grid{grid-template-columns:1fr}.hall-head h1{font-size:24px}}
+
+
+.rank-1{background:#fff8db!important}.rank-2{background:#eef2ff!important}.rank-3{background:#fff1f2!important}
+.leader-card{border:1px solid #dbe7ff;background:#f8fbff;border-radius:16px;padding:14px;margin:10px 0}
+.leader-title{font-size:22px;font-weight:900;margin:10px 0}
+.rank-badge{display:inline-block;min-width:42px;text-align:center;border-radius:999px;background:#0b57d0;color:#fff;padding:6px 10px;font-weight:900}
+.pass{color:#137333;font-weight:900}.fail{color:#d93025;font-weight:900}
